@@ -1,0 +1,8 @@
+D:\programming\YandexDISK\Сжатия\LZSS\LZSS\bin\Release\LZSS.exe
+D:\programming\YandexDISK\Сжатия\LZSS\LZSS\bin\Release\LZSS.pdb
+D:\programming\YandexDISK\Сжатия\LZSS\LZSS\obj\Release\LZSS.Form1.resources
+D:\programming\YandexDISK\Сжатия\LZSS\LZSS\obj\Release\LZSS.Properties.Resources.resources
+D:\programming\YandexDISK\Сжатия\LZSS\LZSS\obj\Release\LZSS.csproj.GenerateResource.Cache
+D:\programming\YandexDISK\Сжатия\LZSS\LZSS\obj\Release\LZSS.exe
+D:\programming\YandexDISK\Сжатия\LZSS\LZSS\obj\Release\LZSS.pdb
+D:\programming\YandexDISK\Сжатия\LZSS\LZSS\obj\Release\LZSS.csprojResolveAssemblyReference.cache

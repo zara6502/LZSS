@@ -1,0 +1,15 @@
+D:\programming\Сжатия\LZSS\LZSS\bin\Debug\LZSS.exe
+D:\programming\Сжатия\LZSS\LZSS\bin\Debug\LZSS.pdb
+D:\programming\Сжатия\LZSS\LZSS\obj\Debug\LZSS.csprojResolveAssemblyReference.cache
+D:\programming\Сжатия\LZSS\LZSS\obj\Debug\LZSS.Form1.resources
+D:\programming\Сжатия\LZSS\LZSS\obj\Debug\LZSS.Properties.Resources.resources
+D:\programming\Сжатия\LZSS\LZSS\obj\Debug\LZSS.csproj.GenerateResource.Cache
+D:\programming\Сжатия\LZSS\LZSS\obj\Debug\LZSS.exe
+D:\programming\Сжатия\LZSS\LZSS\obj\Debug\LZSS.pdb
+D:\programming\YandexDISK\Сжатия\LZSS\LZSS\obj\Debug\LZSS.exe
+D:\programming\YandexDISK\Сжатия\LZSS\LZSS\obj\Debug\LZSS.pdb
+D:\programming\YandexDISK\Сжатия\LZSS\LZSS\obj\Debug\LZSS.Form1.resources
+D:\programming\YandexDISK\Сжатия\LZSS\LZSS\obj\Debug\LZSS.Properties.Resources.resources
+D:\programming\YandexDISK\Сжатия\LZSS\LZSS\obj\Debug\LZSS.csproj.GenerateResource.Cache
+D:\programming\YandexDISK\Сжатия\LZSS\LZSS\bin\Debug\LZSS.exe
+D:\programming\YandexDISK\Сжатия\LZSS\LZSS\bin\Debug\LZSS.pdb

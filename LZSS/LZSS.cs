@@ -2,13 +2,12 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 
 namespace LZSS
 {
     class LZSS/*<TDataType> where TDataType : IComparable<TDataType>*/
     {
-        public float Procent = 0f;
+        public float Procent;
 
         /// <summary>
         /// Высвобождает память
@@ -61,7 +60,7 @@ namespace LZSS
         /// </summary>
         /// <param name="source">Исходный поток данных для сжатия</param>
         /// <returns></returns>
-        public BitArray Compress(Byte[] source)
+        public BitArray Compress(IList<Byte> source)
         {
             //Словарь
             var dictionary = new List<Byte>();
@@ -70,10 +69,10 @@ namespace LZSS
             //Буферное окошко
             var buffer = new List<Byte>();
 
-            for (var i = 0; i < source.Length; i++)
+            for (var i = 0; i < source.Count; i++)
             {
                 buffer.Add(source[i]);
-                while ((SearchInDict(dictionary, buffer) != -1 && i + 1 < source.Length))
+                while ((SearchInDict(dictionary, buffer) != -1 && i + 1 < source.Count))
                 {
                     buffer.Add(source[++i]);
                 }
@@ -105,7 +104,7 @@ namespace LZSS
                     }
                     buffer.Clear();
                 }
-                Procent = (100f / source.Length) * i;
+                Procent = (100f / source.Count) * i;
             }
             Procent = 100;
             var countBits = new BitArray(BitConverter.GetBytes(output.Count)).Cast<Boolean>().ToList();

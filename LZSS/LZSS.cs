@@ -5,7 +5,10 @@ using System.Linq;
 
 namespace LZSS
 {
-    class LZSS/*<TDataType> where TDataType : IComparable<TDataType>*/
+    /// <summary>
+    /// Очень тормознуто и медленно, надо бы переписать... Но делаллось исключительно как лаба :D
+    /// </summary>
+    class LZSS
     {
         public float Procent;
 
@@ -23,17 +26,19 @@ namespace LZSS
         /// <param name="dictionary">Входной массив/список в котором выполняем поиск подпоследовательности</param>
         /// <param name="input">Подпоследовательность для поиска </param>
         /// <returns>Если последовательность была найдена возвращает её индекс, иначе  -1</returns>
-        private Int32 SearchInDict(IList<Byte> dictionary, IList<Byte> input)
+        private Int32 SearchInDict(IList<Byte> dictionary, IList<Byte> input, Int32 oldInd)
         {
             //if (input.Count > dictionary.Count) return -1;
-            for (var i = 0; i < dictionary.Count; i++)
+            for (var i = oldInd; i < dictionary.Count; i++)
             {
-                for (var j = 0; j < input.Count && i + j < dictionary.Count; j++)
+                for (byte j = 0; j < input.Count && i + j < dictionary.Count; j++)
                 {
                     if (dictionary[i + j] == input[j])
                     {
                         if (j + 1 == input.Count)
+                        {
                             return i;
+                        }
                     }
                     else break;
                 }
@@ -43,17 +48,13 @@ namespace LZSS
 
         IEnumerable<Boolean> getBitList(Byte input)
         {
-            return new BitArray(new[] { input }).Cast<Boolean>().ToList();
+            var arr = new Boolean[8];
+            for (Byte i = 0; i < 8; i++)
+            {
+                arr[i] = (input & (1 << i)) > 0;
+            }
+            return arr;
         }
-
-        private Byte BitArrayToByte(BitArray ba)
-        {
-            Byte result = 0;
-            for (Byte index = 0, m = 1; index < 8; index++, m *= 2)
-                result += ba.Get(index) ? m : (Byte)0;
-            return result;
-        }
-
 
         /// <summary>
         /// Сжимает входную последовательность с помощью алгоритма LZSS
@@ -63,19 +64,25 @@ namespace LZSS
         public BitArray Compress(IList<Byte> source)
         {
             //Словарь
-            var dictionary = new List<Byte>();
+            var dictionary = new List<Byte>(255);
             //Выходной поток
-            var output = new List<Boolean>();
+            var output = new List<Boolean>(source.Count / 5);
             //Буферное окошко
-            var buffer = new List<Byte>();
+            var buffer = new List<Byte>(255);
 
             for (var i = 0; i < source.Count; i++)
             {
                 buffer.Add(source[i]);
-                while ((SearchInDict(dictionary, buffer) != -1 && i + 1 < source.Count))
+                var oldInd = 0;
+                do
                 {
-                    buffer.Add(source[++i]);
-                }
+                    oldInd = SearchInDict(dictionary, buffer, oldInd);
+                    if (oldInd != -1 && i + 1 < source.Count)
+                        buffer.Add(source[++i]);
+                    else
+                        break;
+                } while (true);
+
                 if (buffer.Count > 1)
                 {
                     buffer.RemoveAt(buffer.Count - 1);
@@ -84,7 +91,7 @@ namespace LZSS
                 if (buffer.Count > 1)
                 {
                     output.Add(true);
-                    output.AddRange(getBitList((Byte)((dictionary.Count) - SearchInDict(dictionary, buffer))));
+                    output.AddRange(getBitList((Byte)((dictionary.Count) - SearchInDict(dictionary, buffer, 0))));
                     output.AddRange(getBitList((Byte)buffer.Count));
                     dictionary.AddRange(buffer);
                     while (dictionary.Count > 255)
@@ -96,7 +103,7 @@ namespace LZSS
                 else
                 {
                     output.Add(false);
-                    output.AddRange(new BitArray(buffer.ToArray()).Cast<Boolean>().ToList());
+                    output.AddRange(new BitArray(buffer.ToArray()).Cast<Boolean>());
                     dictionary.AddRange(buffer);
                     while (dictionary.Count > 255)
                     {
@@ -107,7 +114,7 @@ namespace LZSS
                 Procent = (100f / source.Count) * i;
             }
             Procent = 100;
-            var countBits = new BitArray(BitConverter.GetBytes(output.Count)).Cast<Boolean>().ToList();
+            var countBits = new BitArray(BitConverter.GetBytes(output.Count)).Cast<Boolean>();
             output.InsertRange(0, countBits);
             return new BitArray(output.ToArray());
         }
@@ -122,32 +129,30 @@ namespace LZSS
         {
             //Выходной поток
             var output = new List<Byte>();
-            var tempByte = new BitArray(8);
-            var bitOffset = new BitArray(8);
-            var bitCount = new BitArray(8);
-            for (var i = 32; i < bitsCount + 24; )
+            for (var i = 32; i < bitsCount + 24;)
             {
                 if (source[i] == false)
                 {
-                    for (var j = 0; j < 8 && j + i + 1 < source.Length; j++)
+                    Byte tempByte = 0x0;
+                    for (byte j = 0; j < 8 && j + i + 1 < source.Length; j++)
                     {
-                        tempByte[j] = source[++i];
+                        tempByte |= (byte)((source[++i] ? 1 : 0) << j);
                     }
-                    output.Add(BitArrayToByte(tempByte));
+                    output.Add(tempByte);
                     i++;
                 }
                 else
                 {
-                    for (var j = 0; j < 8; j++)
+                    Byte offset = 0;
+                    Byte count = 0;
+                    for (byte j = 0; j < 8; j++)
                     {
-                        bitOffset[j] = source[++i];
+                        offset |= (byte)((source[++i] ? 1 : 0) << j);
                     }
-                    for (var j = 0; j < 8; j++)
+                    for (byte j = 0; j < 8; j++)
                     {
-                        bitCount[j] = source[++i];
+                        count |= (byte)((source[++i] ? 1 : 0) << j);
                     }
-                    var offset = BitArrayToByte(new BitArray(bitOffset));
-                    var count = BitArrayToByte(new BitArray(bitCount));
                     var dicCount = output.Count;
                     for (var c = 0; c < count; c++)
                     {
